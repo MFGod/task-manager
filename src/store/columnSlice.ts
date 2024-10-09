@@ -33,7 +33,7 @@ const columnsSlice = createSlice({
       if (!existingColumn) {
         state.columns.push(action.payload);
       } else {
-        console.warn(`Column with id ${action.payload.id} already exists.`);
+        console.warn(`Колонка с Id ${action.payload.id} уже существует.`);
       }
     },
 
@@ -43,7 +43,7 @@ const columnsSlice = createSlice({
       if (column) {
         column.title = title;
       } else {
-        console.warn(`Column with id ${id} does not exist.`);
+        console.warn(`Колонка с ${id} не найдена.`);
       }
     },
     deleteColumn(state, action: PayloadAction<string>) {
