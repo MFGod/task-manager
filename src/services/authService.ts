@@ -3,6 +3,11 @@ export const handleRegistration = async (
   email: string,
   password: string
 ) => {
+  // Проверка входных данных
+  if (!username || !email || !password) {
+    throw new Error('Все поля должны быть заполнены');
+  }
+
   const userData = {
     username,
     email,
@@ -17,8 +22,10 @@ export const handleRegistration = async (
       },
       body: JSON.stringify(userData),
     });
+
     if (!response.ok) {
-      throw new Error('Ошибка при регистрации!');
+      const errorText = await response.text();
+      throw new Error(`Ошибка при регистрации: ${errorText}`);
     }
 
     const { userId, token } = await response.json(); // Сервер возвращает userId и token
@@ -32,6 +39,11 @@ export const handleRegistration = async (
 };
 
 export const handleLogin = async (email: string, password: string) => {
+  // Проверка входных данных
+  if (!email || !password) {
+    throw new Error('Все поля должны быть заполнены');
+  }
+
   const userData = { email, password };
 
   try {

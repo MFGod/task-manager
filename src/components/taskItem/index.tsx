@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useDrag } from 'react-dnd';
 import styled from 'styled-components';
 
@@ -75,7 +75,7 @@ export const TaskItem: FC<TaskItemProps> = ({
 
   const daysLeft = calculateDaysLeft(task.dueDate || '');
 
-  const borderColor = () => {
+  const borderColor = useMemo(() => {
     if (daysLeft <= 3) {
       return '#ff4d4d';
     } else if (daysLeft <= 7) {
@@ -83,10 +83,10 @@ export const TaskItem: FC<TaskItemProps> = ({
     } else {
       return 'transparent';
     }
-  };
+  }, [daysLeft]);
 
   return (
-    <StList ref={drag} border={borderColor()}>
+    <StList ref={drag} border={borderColor}>
       <TaskBlock onClick={() => onView(task)}>
         <Title>{task.title}</Title>
         <p>{task.dueDate ? formatDate(task.dueDate) : ''} </p>

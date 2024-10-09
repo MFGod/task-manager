@@ -1,4 +1,5 @@
 import { Task } from '../store/taskSlice';
+import { getCurrentDate } from '../utils/dateUtils';
 
 export const getTasks = async (
   token: string,
@@ -13,7 +14,8 @@ export const getTasks = async (
   });
 
   if (!response.ok) {
-    throw new Error('Ошибка при получении задач');
+    const errorText = await response.text();
+    throw new Error(`Ошибка при получении задач: ${errorText}`);
   }
 
   const tasks = await response.json();
@@ -24,17 +26,26 @@ export const getTasks = async (
 };
 
 export const addTask = async (task: Task, token: string): Promise<Task> => {
+  if (!task.title) {
+    throw new Error('Заголовок должн быть заполнен');
+  }
+
   const response = await fetch('api/tasks', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(task),
+    body: JSON.stringify({
+      ...task,
+      userId: localStorage.getItem('userId'),
+      createdDate: getCurrentDate(),
+    }),
   });
 
   if (!response.ok) {
-    throw new Error('Ошибка при добавлении задачи');
+    const errorText = await response.text();
+    throw new Error(`Ошибка при добавлении задачи: ${errorText}`);
   }
 
   return await response.json();
