@@ -5,7 +5,7 @@ export const getTasks = async (
   token: string,
   userId: string
 ): Promise<Task[]> => {
-  const response = await fetch('/api/tasks', {
+  const response = await fetch('https://localhost:7048/api/tasks', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -29,8 +29,8 @@ export const addTask = async (task: Task, token: string): Promise<Task> => {
   if (!task.title) {
     throw new Error('Заголовок должн быть заполнен');
   }
-
-  const response = await fetch('api/tasks', {
+  
+  const response = await fetch('https://localhost:7048/api/tasks', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

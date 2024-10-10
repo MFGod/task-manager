@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router';
+
 export const handleRegistration = async (
   username: string,
   email: string,
@@ -15,7 +17,7 @@ export const handleRegistration = async (
   };
 
   try {
-    const response = await fetch('/api/auth', {
+    const response = await fetch('https://localhost:7048/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,6 +34,10 @@ export const handleRegistration = async (
     localStorage.setItem('userId', userId);
     localStorage.setItem('token', token);
 
+    const router = useRouter();
+
+    router.push('/all');
+
     return { userId, token };
   } catch (error) {
     throw new Error('Ошибка при регистрации. Попробуйте снова!');
@@ -47,8 +53,8 @@ export const handleLogin = async (email: string, password: string) => {
   const userData = { email, password };
 
   try {
-    const response = await fetch('/api/auth', {
-      method: 'GET',
+    const response = await fetch('https://localhost:7048/api/auth', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -62,6 +68,9 @@ export const handleLogin = async (email: string, password: string) => {
     const { userId, token } = await response.json(); // Сервер возвращает userId и token
     localStorage.setItem('userId', userId);
     localStorage.setItem('token', token);
+
+    const router = useRouter();
+    router.push('/all');
 
     return { userId, token };
   } catch (error) {

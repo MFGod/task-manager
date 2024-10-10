@@ -8,7 +8,7 @@ export const getColumns = async (
     throw new Error('userId не установлен');
   }
 
-  const response = await fetch('/api/columns', {
+  const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const addColumnApi = async (
     throw new Error('Название колонки не может быть пустым');
   }
 
-  const response = await fetch('api/columns', {
+  const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
