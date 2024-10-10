@@ -4,7 +4,7 @@ export const getColumns = async (
   token: string,
   userId: string
 ): Promise<Column[]> => {
-  const response = await fetch('/api/columns', {
+  const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export const addColumnApi = async (
   userId: string,
   column: Column
 ): Promise<Column> => {
-  const response = await fetch('api/columns', {
+  const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

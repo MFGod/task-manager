@@ -4,8 +4,8 @@ export const handleLogin = async (email: string, password: string) => {
   const userData = { email, password };
 
   try {
-    const response = await fetch('/api/auth', {
-      method: 'GET',
+    const response = await fetch('https://localhost:7048/api/auth', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -41,7 +41,7 @@ export const handleRegistration = async (
   };
 
   try {
-    const response = await fetch('/api/auth', {
+    const response = await fetch('https://localhost:7048/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
