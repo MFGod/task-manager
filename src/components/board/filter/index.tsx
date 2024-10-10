@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
+import { FilterType } from '../../../utils/taskUtils';
 
 const FilterList = styled.ul`
   display: flex;
@@ -46,8 +47,8 @@ const Number = styled.span`
 
 interface TaskFilterInterface {
   tasksCount: { [key: string]: number };
-  currentFilter: string;
-  onFilterChange: (filter: string) => void;
+  currentFilter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
 }
 
 export const TaskFilter: FC<TaskFilterInterface> = ({
@@ -61,7 +62,7 @@ export const TaskFilter: FC<TaskFilterInterface> = ({
         <Item
           key={key}
           isActive={currentFilter === key}
-          onClick={() => onFilterChange(key)}
+          onClick={() => onFilterChange(key as FilterType)}
         >
           {key === 'recentlyAdded' && 'Недавно добавленные'}
           {key === 'today' && 'Сделать сегодня'}

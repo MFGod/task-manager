@@ -4,6 +4,10 @@ export const getColumns = async (
   token: string,
   userId: string
 ): Promise<Column[]> => {
+  if (!userId) {
+    throw new Error('userId не установлен');
+  }
+
   const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'GET',
     headers: {
@@ -13,7 +17,8 @@ export const getColumns = async (
   });
 
   if (!response.ok) {
-    throw new Error('Ошибка при получении колонок');
+    const errorText = await response.text();
+    throw new Error(`Ошибка при получении колонок: ${errorText}`);
   }
 
   const columns = await response.json();
@@ -30,6 +35,14 @@ export const addColumnApi = async (
   userId: string,
   column: Column
 ): Promise<Column> => {
+  if (!userId) {
+    throw new Error('userId не установлен');
+  }
+
+  if (!column.title) {
+    throw new Error('Название колонки не может быть пустым');
+  }
+
   const response = await fetch('https://localhost:7048/api/task-columns', {
     method: 'POST',
     headers: {
@@ -40,7 +53,8 @@ export const addColumnApi = async (
   });
 
   if (!response.ok) {
-    throw new Error('Ошибка при добавлении колонки');
+    const errorText = await response.text();
+    throw new Error(`Ошибка при добавлении колонки: ${errorText}`);
   }
 
   return await response.json();

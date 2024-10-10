@@ -1,9 +1,12 @@
 import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ModalsContext } from '../../../../pages/_app';
 
 import { addTask, Task } from '../../../store/taskSlice';
+
+import { getCurrentDate } from '../../../utils/dateUtils';
 
 import { TaskForm } from '../../form/task';
 
@@ -13,15 +16,20 @@ export const AddModal = () => {
   const { closeModal } = useContext(ModalsContext);
   const dispatch = useDispatch();
 
-  const handleAddTask = (task: Task) => {
+  const handleAddTask = (
+    task: Omit<Task, 'id' | 'userId' | 'createdDate' | 'column'>
+  ) => {
     const userId = localStorage.getItem('userId') || '';
 
-    if (!userId) {
-      console.error('User ID not found in localStorage');
-      return; // Выход из функции, если userId не найден
-    }
+    const newTask: Task = {
+      ...task,
+      id: uuidv4(), // Генерация нового ID для задачи
+      userId,
+      createdDate: getCurrentDate(), // Установить текущую дату
+      column: 'todo', // Задачи по умолчанию добавляются в колонку "Нужно сделать"
+    };
 
-    dispatch(addTask({ ...task, userId }));
+    dispatch(addTask(newTask));
     closeModal();
   };
 

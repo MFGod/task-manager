@@ -26,13 +26,24 @@ const columnsSlice = createSlice({
       state.columns = action.payload;
     },
     addColumn(state, action: PayloadAction<Column>) {
-      state.columns.push(action.payload);
+      const existingColumn = state.columns.find(
+        (column) => column.id === action.payload.id
+      );
+
+      if (!existingColumn) {
+        state.columns.push(action.payload);
+      } else {
+        console.warn(`Колонка с Id ${action.payload.id} уже существует.`);
+      }
     },
+
     updateColumn(state, action: PayloadAction<Column>) {
       const { id, title } = action.payload;
       const column = state.columns.find((column) => column.id === id);
       if (column) {
         column.title = title;
+      } else {
+        console.warn(`Колонка с ${id} не найдена.`);
       }
     },
     deleteColumn(state, action: PayloadAction<string>) {

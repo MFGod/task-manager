@@ -8,7 +8,7 @@ import { StAddColumn } from '../../../public/assets/addColumn';
 import { useAppSelector } from '../../store/hooks';
 import { addColumn, deleteColumn, updateColumn } from '../../store/columnSlice';
 
-import { filterTaskByFilter, filterTasksByColumn } from '../../utils/taskUtils';
+import { filterTaskByFilter, filterTasksByColumn, FilterType } from '../../utils/taskUtils';
 
 import { addColumnApi } from '../../services/columnService';
 
@@ -56,9 +56,9 @@ const List = styled.ul`
   }
 `;
 
-export const Board: FC = () => {
+export const  Board: FC = () => {
   const [columnTitle, setColumnTitle] = useState('Название');
-  const [filter, setFilter] = useState<string>('all');
+  const [filter, setFilter] = useState<FilterType>('all');
   const dispatch = useDispatch();
 
   const tasks = useAppSelector((state) => state.tasks.tasks);
@@ -68,6 +68,12 @@ export const Board: FC = () => {
     if (columnTitle.trim()) {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+         console.error('Необходим токен и userId для добавления колонки.');
+         return; // Выход из функции, если токен или userId отсутствуют
+       }
+
       if (token && userId) {
         const newColumn = {
           id: uuidv4(),

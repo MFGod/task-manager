@@ -23,8 +23,8 @@ interface TasksState {
 
 interface MoveTaskPayload {
   taskId: string;
-  source: string; // Добавлено свойство source
-  destination: string; // Оставлено как есть
+  source: string;
+  destination: string;
 }
 
 const initialState: TasksState = {
@@ -39,22 +39,27 @@ const tasksSlice = createSlice({
       state.tasks = action.payload;
     },
 
-    addTask(state, action: PayloadAction<Task>) {
+    addTask(
+      state,
+      action: PayloadAction<Omit<Task, 'userId' | 'createdDate'>>
+    ) {
       const userId = localStorage.getItem('userId');
 
-      //Проверяем, есть ли userId
       if (!userId) {
-        console.error('Ошибка: userId не найден в localStorage');
+        console.warn(
+          'Предупреждение: userId не найден в localStorage. Задача не будет добавлена.'
+        );
         return;
       }
 
-      state.tasks.push({
+      const newTask: Task = {
         ...action.payload,
         userId,
-        column: 'todo', // Задачи по умолчанию добавляются в колонку "Нужно сделать"
         createdDate: getCurrentDate(),
-        dueDate: action.payload.dueDate,
-      });
+        column: 'todo',
+      };
+
+      state.tasks.push(newTask);
     },
 
     deleteTask(state, action: PayloadAction<string>) {
@@ -62,33 +67,30 @@ const tasksSlice = createSlice({
     },
 
     updateTask(state, action: PayloadAction<Task>) {
-      const index = state.tasks.findIndex(
+      const task = state.tasks.find(
         (task) =>
           task.id === action.payload.id && task.userId === action.payload.userId
       );
-      if (index !== -1) {
-        state.tasks[index] = action.payload;
+      if (task) {
+        Object.assign(task, action.payload); // Прямое обновление объекта задачи
       }
     },
+
     moveTask(state, action: PayloadAction<MoveTaskPayload>) {
-      const { taskId, destination } = action.payload; // Получаем ID задачи и колонку назначения
-      const taskIndex = state.tasks.findIndex((task) => task.id === taskId); // Находим индекс задачи
+      const { taskId, destination } = action.payload;
+      const task = state.tasks.find((task) => task.id === taskId);
 
-      if (taskIndex === -1) return; // Если задача не найдена, выходим
+      if (!task) {
+        console.warn(`Задача с Id ${taskId} не найдена!.`);
+        return;
+      }
 
-      const task = state.tasks[taskIndex]; // Получаем задачу
+      // Обновляем значения задачи
+      task.column = destination;
+      task.completed = destination === 'completed';
+      task.inProgress = destination === 'inProgress';
 
-      // Определяем новые значения для обновленной задачи
-      const newValues = {
-        column: destination,
-        completed: destination === 'completed',
-        inProgress: destination === 'inProgress',
-      };
-
-      // Обновляем состояние задачи
-      state.tasks[taskIndex] = { ...task, ...newValues };
-
-      console.log(`Task ${taskId} moved to ${destination}`); // Логируем перемещение
+      console.log(`Задача ${taskId} перемещена в ${destination}`);
     },
   },
 });
