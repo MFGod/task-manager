@@ -29,7 +29,7 @@ export const addTask = async (task: Task, token: string): Promise<Task> => {
   if (!task.title) {
     throw new Error('Заголовок должн быть заполнен');
   }
-  
+
   const response = await fetch('https://localhost:7048/api/tasks', {
     method: 'POST',
     headers: {
