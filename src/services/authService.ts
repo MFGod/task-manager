@@ -46,7 +46,7 @@ export const handleRegistration = async (
 export const handleLogin = async (
   emailLogin: string,
   password: string,
-
+  router: NextRouter
 ) => {
   // Проверка входных данных
   if (!emailLogin || !password) {
@@ -73,8 +73,8 @@ export const handleLogin = async (
     localStorage.setItem('userId', userId);
     localStorage.setItem('token', accessTokenString);
 
-   
-
+    router.push('/all');
+    
     return { userId, accessTokenString };
   } catch (error) {
     throw new Error('Ошибка при авторизации. Попробуйте снова!');
