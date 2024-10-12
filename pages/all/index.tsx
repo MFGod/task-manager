@@ -15,14 +15,14 @@ const AllPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const accessTokenString = localStorage.getItem('accessTokenString');
+    if (!accessTokenString) {
       router.push('/');
     }
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessTokenString');
     localStorage.removeItem('userId');
 
     router.push('/');

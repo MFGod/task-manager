@@ -1,9 +1,10 @@
-import { useRouter } from 'next/router';
+import { NextRouter } from 'next/router';
 
 export const handleRegistration = async (
   username: string,
   email: string,
-  password: string
+  password: string,
+  router: NextRouter
 ) => {
   // Проверка входных данных
   if (!username || !email || !password) {
@@ -25,58 +26,56 @@ export const handleRegistration = async (
       body: JSON.stringify(userData),
     });
 
-    if (response.ok) {
-      console.log('Вы успешно зарегистрированы!');
-    } else {
+    if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Ошибка при регистрации: ${errorText}`);
     }
 
-    const { userId, token } = await response.json(); // Сервер возвращает userId и token
+    const { userId, accessTokenString } = await response.json(); // Сервер возвращает userId и token
     localStorage.setItem('userId', userId);
-    localStorage.setItem('token', token);
-
-    const router = useRouter();
+    localStorage.setItem('token', accessTokenString);
 
     router.push('/all');
 
-    return { userId, token };
+    return { userId, accessTokenString };
   } catch (error) {
     throw new Error('Ошибка при регистрации. Попробуйте снова!');
   }
 };
 
-export const handleLogin = async (email: string, password: string) => {
+export const handleLogin = async (
+  emailLogin: string,
+  password: string,
+
+) => {
   // Проверка входных данных
-  if (!email || !password) {
+  if (!emailLogin || !password) {
     throw new Error('Все поля должны быть заполнены');
   }
 
-  const userData = { email, password };
+  const userData = { emailLogin, password };
+
+  console.log(JSON.stringify(userData));
 
   try {
-    const response = await fetch('https://localhost:7048/api/auth', {
+    const response = await fetch('https://localhost:7048/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userData),
     });
-
-    if (response.ok) {
-      console.log('Вы успешно авторизованы!');
-    } else {
+    if (!response.ok) {
       throw new Error('Неверные учетные данные');
     }
 
-    const { userId, token } = await response.json(); // Сервер возвращает userId и token
+    const { userId, accessTokenString } = await response.json(); // Сервер возвращает userId и token
     localStorage.setItem('userId', userId);
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', accessTokenString);
 
-    const router = useRouter();
-    router.push('/all');
+   
 
-    return { userId, token };
+    return { userId, accessTokenString };
   } catch (error) {
     throw new Error('Ошибка при авторизации. Попробуйте снова!');
   }

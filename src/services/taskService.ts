@@ -2,20 +2,18 @@ import { Task } from '../store/taskSlice';
 import { getCurrentDate } from '../utils/dateUtils';
 
 export const getTasks = async (
-  token: string,
+  accessTokenString: string,
   userId: string
 ): Promise<Task[]> => {
-  const response = await fetch('https://localhost:7048/api/tasks', {
+  const response = await fetch('https://localhost:7048/api/user-tasks/all', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessTokenString}`,
     },
   });
 
-  if (response.ok) {
-    console.log('Задачи получены!');
-  } else {
+  if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Ошибка при получении задач: ${errorText}`);
   }
@@ -27,16 +25,16 @@ export const getTasks = async (
   return userTasks;
 };
 
-export const addTask = async (task: Task, token: string): Promise<Task> => {
+export const addTask = async (task: Task, accessTokenString: string): Promise<Task> => {
   if (!task.title) {
     throw new Error('Заголовок должн быть заполнен');
   }
 
-  const response = await fetch('https://localhost:7048/api/tasks', {
+  const response = await fetch('https://localhost:7048/api/user-tasks', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessTokenString}`,
     },
     body: JSON.stringify({
       ...task,
@@ -45,9 +43,7 @@ export const addTask = async (task: Task, token: string): Promise<Task> => {
     }),
   });
 
-  if (response.ok) {
-    console.log('Добавлена новая задача!');
-  } else {
+  if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Ошибка при добавлении задачи: ${errorText}`);
   }

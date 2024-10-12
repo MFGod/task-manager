@@ -1,20 +1,22 @@
 import { FormEvent, useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { ModalsContext } from '../../pages/_app';
 
 import { handleLogin } from '../services/authService';
 
 export const useLogin = () => {
-  const [email, setEmail] = useState('');
+  const [emailLogin, setEmailLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { closeModal } = useContext(ModalsContext);
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      await handleLogin(email, password);
+      await handleLogin(emailLogin, password);
       alert('Авторизация успешно завершена!');
       closeModal();
     } catch (error) {
@@ -23,8 +25,8 @@ export const useLogin = () => {
   };
 
   return {
-    email,
-    setEmail,
+    emailLogin,
+    setEmailLogin,
     password,
     setPassword,
     error,

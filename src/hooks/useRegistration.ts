@@ -1,12 +1,14 @@
 import { FormEvent, useState } from 'react';
 
 import { handleRegistration } from '../services/authService';
+import { useRouter } from 'next/router';
 
 export const useRegistration = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,7 @@ export const useRegistration = () => {
     }
 
     try {
-      await handleRegistration(username, email, password);
+      await handleRegistration(username, email, password, router);
       alert('Регистрация завершена!');
       setUsername('');
       setEmail('');

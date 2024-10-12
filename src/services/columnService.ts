@@ -1,7 +1,7 @@
 import { Column } from '../store/columnSlice';
 
 export const getColumns = async (
-  token: string,
+   accessTokenString: string,
   userId: string
 ): Promise<Column[]> => {
   if (!userId) {
@@ -12,13 +12,11 @@ export const getColumns = async (
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessTokenString}`,
     },
   });
 
-  if (response.ok) {
-    console.log('Колонки успешно получены!');
-  } else {
+  if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Ошибка при получении колонок: ${errorText}`);
   }
@@ -33,13 +31,17 @@ export const getColumns = async (
 };
 
 export const addColumnApi = async (
-  token: string,
+   accessTokenString: string,
   userId: string,
   column: Column
 ): Promise<Column> => {
   if (!userId) {
     throw new Error('userId не установлен');
   }
+
+  if (!accessTokenString) {
+   throw new Error('userId не установлен');
+ }
 
   if (!column.title) {
     throw new Error('Название колонки не может быть пустым');
@@ -49,7 +51,7 @@ export const addColumnApi = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessTokenString}`,
     },
     body: JSON.stringify({ ...column, userId }),
   });

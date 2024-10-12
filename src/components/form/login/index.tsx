@@ -14,7 +14,7 @@ const ButtonsBlock = styled.div`
 `;
 
 export const LoginForm: FC = () => {
-  const { email, setEmail, password, setPassword, error, handleSubmit } =
+  const { emailLogin, setEmailLogin, password, setPassword, error, handleSubmit } =
     useLogin();
   const { closeModal } = useContext(ModalsContext);
 
@@ -23,8 +23,8 @@ export const LoginForm: FC = () => {
       <Wrapper>
         <Input
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={emailLogin}
+          onChange={(e) => setEmailLogin(e.target.value)}
           placeholder="Email"
           required
         />
