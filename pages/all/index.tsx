@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import { Board } from '../../src/components/board';
+import { StButton } from '../../src/components/form/styles';
 
 const Wrapper = styled.div`
   margin: 20px 40px;
@@ -20,9 +21,17 @@ const AllPage = () => {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+
+    router.push('/');
+  };
+
   return (
     <Wrapper>
       <DndProvider backend={HTML5Backend}>
+        <StButton onClick={handleLogout}>Выйти</StButton>
         <Board />
       </DndProvider>
     </Wrapper>

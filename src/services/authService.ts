@@ -25,7 +25,9 @@ export const handleRegistration = async (
       body: JSON.stringify(userData),
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+      console.log('Вы успешно зарегистрированы!');
+    } else {
       const errorText = await response.text();
       throw new Error(`Ошибка при регистрации: ${errorText}`);
     }
@@ -61,7 +63,9 @@ export const handleLogin = async (email: string, password: string) => {
       body: JSON.stringify(userData),
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+      console.log('Вы успешно авторизованы!');
+    } else {
       throw new Error('Неверные учетные данные');
     }
 

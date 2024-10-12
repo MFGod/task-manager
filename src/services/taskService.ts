@@ -13,7 +13,9 @@ export const getTasks = async (
     },
   });
 
-  if (!response.ok) {
+  if (response.ok) {
+    console.log('Задачи получены!');
+  } else {
     const errorText = await response.text();
     throw new Error(`Ошибка при получении задач: ${errorText}`);
   }
@@ -43,7 +45,9 @@ export const addTask = async (task: Task, token: string): Promise<Task> => {
     }),
   });
 
-  if (!response.ok) {
+  if (response.ok) {
+    console.log('Добавлена новая задача!');
+  } else {
     const errorText = await response.text();
     throw new Error(`Ошибка при добавлении задачи: ${errorText}`);
   }

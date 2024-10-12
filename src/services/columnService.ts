@@ -16,7 +16,9 @@ export const getColumns = async (
     },
   });
 
-  if (!response.ok) {
+  if (response.ok) {
+    console.log('Колонки успешно получены!');
+  } else {
     const errorText = await response.text();
     throw new Error(`Ошибка при получении колонок: ${errorText}`);
   }
@@ -52,7 +54,9 @@ export const addColumnApi = async (
     body: JSON.stringify({ ...column, userId }),
   });
 
-  if (!response.ok) {
+  if (response.ok) {
+    console.log('Колонка успешно добавлена!');
+  } else {
     const errorText = await response.text();
     throw new Error(`Ошибка при добавлении колонки: ${errorText}`);
   }
