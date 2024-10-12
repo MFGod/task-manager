@@ -25,7 +25,10 @@ export const getTasks = async (
   return userTasks;
 };
 
-export const addTask = async (task: Task, accessTokenString: string): Promise<Task> => {
+export const addTask = async (
+  task: Task,
+  accessTokenString: string
+): Promise<Task> => {
   if (!task.title) {
     throw new Error('Заголовок должн быть заполнен');
   }

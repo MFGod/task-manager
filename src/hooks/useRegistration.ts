@@ -1,13 +1,15 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 
 import { handleRegistration } from '../services/authService';
 import { useRouter } from 'next/router';
+import { ModalsContext } from '../../pages/_app';
 
 export const useRegistration = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { closeModal } = useContext(ModalsContext);
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -24,6 +26,7 @@ export const useRegistration = () => {
       setUsername('');
       setEmail('');
       setPassword('');
+      closeModal();
     } catch (error) {
       setError('Ошибка при регистрации. Попробуйте снова!');
     }
