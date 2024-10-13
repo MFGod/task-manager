@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { getColumns } from '../services/columnService';
-import { getTasks } from '../services/taskService';
+import { getColumnsService } from '../services/columnService';
+import { getTasksService } from '../services/taskService';
 
 import { setColumns } from '../store/columnSlice';
 import { setTasks } from '../store/taskSlice';
@@ -16,7 +16,8 @@ export const useBoardData = () => {
     const userId = localStorage.getItem('userId');
     if (token && userId) {
       try {
-        const columnsData = await getColumns(token, userId);
+        const columnsData = await getColumnsService(token, userId);
+        console.log('Полученные колонки:', columnsData);
         dispatch(setColumns(columnsData));
       } catch (error) {
         console.error('Ошибка при загрузке колонок:', error);
@@ -30,13 +31,15 @@ export const useBoardData = () => {
     const userId = localStorage.getItem('userId');
     if (token && userId) {
       try {
-        const tasksData = await getTasks(token, userId); // Получаем задачи по userId
+        const tasksData = await getTasksService(token, userId); // Получаем задачи по userId
+        console.log('Полученные задачи:', tasksData);
         dispatch(setTasks(tasksData));
       } catch (error) {
         console.error('Ошибка при загрузке задач:', error);
       }
     }
   };
+
   // Загрузка колонок и задач при монтировании компонента
   useEffect(() => {
     loadColumns();

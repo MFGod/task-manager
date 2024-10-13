@@ -74,7 +74,7 @@ export const handleLogin = async (
     localStorage.setItem('token', accessTokenString);
 
     router.push('/all');
-    
+
     return { userId, accessTokenString };
   } catch (error) {
     throw new Error('Ошибка при авторизации. Попробуйте снова!');

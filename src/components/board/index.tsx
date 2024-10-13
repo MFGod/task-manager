@@ -6,11 +6,23 @@ import { v4 as uuidv4 } from 'uuid';
 import { StAddColumn } from '../../../public/assets/addColumn';
 
 import { useAppSelector } from '../../store/hooks';
-import { addColumn, deleteColumn, updateColumn } from '../../store/columnSlice';
+import {
+  addColumn,
+  columnIdMap,
+  deleteColumn,
+  updateColumn,
+} from '../../store/columnSlice';
 
-import { filterTaskByFilter, filterTasksByColumn, FilterType } from '../../utils/taskUtils';
+import {
+  filterTaskByFilter,
+  filterTasksByColumn,
+  FilterType,
+} from '../../utils/taskUtils';
 
-import { addColumnApi } from '../../services/columnService';
+import {
+  addColumnService,
+  deleteColumnService,
+} from '../../services/columnService';
 
 import Column from '../column';
 
@@ -56,7 +68,7 @@ const List = styled.ul`
   }
 `;
 
-export const  Board: FC = () => {
+export const Board: FC = () => {
   const [columnTitle, setColumnTitle] = useState('Название');
   const [filter, setFilter] = useState<FilterType>('all');
   const dispatch = useDispatch();
@@ -70,22 +82,23 @@ export const  Board: FC = () => {
       const userId = localStorage.getItem('userId');
 
       if (!token || !userId) {
-         console.error('Необходим токен и userId для добавления колонки.');
-         return; // Выход из функции, если токен или userId отсутствуют
-       }
+        console.error('Необходим токен и userId для добавления колонки.');
+        return; // Выход из функции, если токен или userId отсутствуют
+      }
 
-      if (token && userId) {
-        const newColumn = {
-          id: uuidv4(),
-          title: columnTitle,
-        };
-        try {
-          const createdColumn = await addColumnApi(token, userId, newColumn);
-          dispatch(addColumn(createdColumn));
-          setColumnTitle('Название');
-        } catch (error) {
-          console.error('Ошибка при добавлении колонки:', error);
-        }
+      const newColumn = {
+        id: uuidv4(),
+        title: columnTitle,
+      };
+
+      console.log(newColumn);
+
+      try {
+        const createdColumn = await addColumnService(token, userId, newColumn);
+        dispatch(addColumn({ id: createdColumn.id, title: newColumn.title }));
+        setColumnTitle('Название');
+      } catch (error) {
+        console.error('Ошибка при добавлении колонки:', error);
       }
     }
   };
@@ -94,8 +107,28 @@ export const  Board: FC = () => {
     dispatch(updateColumn({ id, title: newTitle }));
   };
 
-  const handleDeleteColumn = (id: string) => {
-    dispatch(deleteColumn(id));
+  const handleDeleteColumn = async (id: string) => {
+    console.log('Удаление колонки с id:', id); // Логирование id
+
+    const token = localStorage.getItem('token');
+
+    const taskColumnId = parseInt(id);
+    console.log('Найденный taskColumnId:', taskColumnId);
+
+    if (!token || !taskColumnId) {
+      console.error(
+        'Необходим токен и корректный taskColumnId для удаления колонки.'
+      );
+      return;
+    }
+
+    try {
+      await deleteColumnService(token, taskColumnId);
+
+      dispatch(deleteColumn(id));
+    } catch (error) {
+      console.error('Ошибка при удалении колонки:', error);
+    }
   };
 
   // Подсчет задач для каждого фильтра

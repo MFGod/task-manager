@@ -18,6 +18,12 @@ const initialState: ColumnState = {
   ],
 };
 
+export const columnIdMap: { [key: string]: number } = {
+  todo: 1,
+  inProgress: 2,
+  completed: 3,
+};
+
 const columnsSlice = createSlice({
   name: 'columns',
   initialState,
