@@ -24,6 +24,8 @@ export const columnIdMap: { [key: string]: number } = {
   completed: 3,
 };
 
+export const PROTECTED_TITLES = ['Нужно сделать', 'В процессе', 'Завершенные']; //Колонки с заголовками, которые нельзя удалять
+
 const columnsSlice = createSlice({
   name: 'columns',
   initialState,

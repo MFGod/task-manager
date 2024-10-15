@@ -1,8 +1,6 @@
 import { columnIdMap } from '../store/columnSlice';
 import { Task } from '../store/taskSlice';
 
-
-
 export const getTasksService = async (
   token: string,
   userId: string
@@ -21,7 +19,7 @@ export const getTasksService = async (
   }
 
   const tasks = await response.json();
-  // Фильтруем задачи по userId
+
   const userTasks = tasks.filter((task: Task) => task.userId === userId);
 
   return userTasks;
@@ -36,11 +34,11 @@ export const addTaskService = async (
   }
   const userId = localStorage.getItem('userId');
 
-  const columnId = columnIdMap[task.column]; // Получите числовой ID или 0 по умолчанию
+  const columnId = columnIdMap[task.column];
 
   const dueDateISO = task.dueDate
-  ? new Date(task.dueDate).toISOString()
-  : new Date().toISOString();
+    ? new Date(task.dueDate).toISOString()
+    : new Date().toISOString();
 
   console.log(`userId:${userId}   `); // Лог для проверки
   console.log(`columnId: ${columnId}`);

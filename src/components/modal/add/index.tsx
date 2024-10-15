@@ -4,13 +4,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ModalsContext } from '../../../../pages/_app';
 
+import { addTask, Task } from '../../../store/taskSlice';
+
+import { addTaskService } from '../../../services/taskService';
+
 import { getCurrentDate } from '../../../utils/dateUtils';
 
 import { TaskForm } from '../../form/task';
 
 import { Title, Wrapper } from '../styles';
-import { addTask, Task } from '../../../store/taskSlice';
-import { addTaskService } from '../../../services/taskService';
 
 export const AddModal = () => {
   const { closeModal } = useContext(ModalsContext);
@@ -24,16 +26,16 @@ export const AddModal = () => {
 
     if (!token || !userId) {
       console.error('Необходим токен и userId для добавления колонки.');
-      return; // Выход из функции, если токен или userId отсутствуют
+      return;
     }
-    
+
     const newTask: Task = {
       ...task,
       id: uuidv4(),
       userId,
       createdDate: getCurrentDate(),
       column: 'todo',
-      dueDate: task.dueDate || '', // Обязательно добавьте dueDate, если требуется
+      dueDate: task.dueDate || '',
       completed: false,
       deleted: false,
       inProgress: false,
@@ -41,12 +43,11 @@ export const AddModal = () => {
 
     try {
       // Отправка задачи на сервер
-      await addTaskService(newTask, token); // Передайте accessToken
-      dispatch(addTask(newTask)); // Добавление задачи в Redux
+      await addTaskService(newTask, token);
+      dispatch(addTask(newTask));
       closeModal();
     } catch (error) {
       console.error('Ошибка при добавлении задачи:', error);
-      // Можно показать сообщение пользователю о возникшей ошибке
     }
   };
 

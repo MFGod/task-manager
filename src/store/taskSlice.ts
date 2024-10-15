@@ -16,7 +16,6 @@ export interface Task {
   column: string;
 }
 
-// Интерфейс для состояния задач
 interface TasksState {
   tasks: Task[];
 }

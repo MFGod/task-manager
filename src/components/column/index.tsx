@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { StDeleteColumn } from '../../../public/assets/deleteColumn';
 
+import { PROTECTED_TITLES } from '../../store/columnSlice';
 import { moveTask, Task } from '../../store/taskSlice';
 
 import TaskList from '../taskList';
@@ -70,11 +71,11 @@ const Column: FC<ColumnProps> = ({
     }),
   });
 
-  const protectedColumns = ['todo', 'inProgress', 'completed'];
+
 
   return (
     <Wrapper ref={drop}>
-      {!protectedColumns.includes(id) && (
+      {!PROTECTED_TITLES.includes(title) && (
         <StDeleteColumn onClick={onDelete}>Удалить</StDeleteColumn>
       )}
       <TitleInput

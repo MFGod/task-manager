@@ -22,7 +22,7 @@ export const EditingModal: FC<EditingModalInterface> = ({ editingTask }) => {
 
     if (!userId) {
       console.error('User ID not found in localStorage');
-      return; // Выход из функции, если userId не найден
+      return;
     }
 
     dispatch(updateTask({ ...task, userId }));

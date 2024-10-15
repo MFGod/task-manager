@@ -1,15 +1,18 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
 import { StAddColumn } from '../../../public/assets/addColumn';
 
+import { useBoardData } from '../../hooks/useBoardData';
+
 import { useAppSelector } from '../../store/hooks';
+
 import {
   addColumn,
-  columnIdMap,
   deleteColumn,
+  PROTECTED_TITLES,
   updateColumn,
 } from '../../store/columnSlice';
 
@@ -76,6 +79,8 @@ export const Board: FC = () => {
   const tasks = useAppSelector((state) => state.tasks.tasks);
   const columns = useAppSelector((state) => state.columns.columns);
 
+  useBoardData();
+
   const handleAddColumn = async () => {
     if (columnTitle.trim()) {
       const token = localStorage.getItem('token');
@@ -91,8 +96,6 @@ export const Board: FC = () => {
         title: columnTitle,
       };
 
-      console.log(newColumn);
-
       try {
         const createdColumn = await addColumnService(token, userId, newColumn);
         dispatch(addColumn({ id: createdColumn.id, title: newColumn.title }));
@@ -107,13 +110,17 @@ export const Board: FC = () => {
     dispatch(updateColumn({ id, title: newTitle }));
   };
 
-  const handleDeleteColumn = async (id: string) => {
-    console.log('Удаление колонки с id:', id); // Логирование id
+  const handleDeleteColumn = async (id: string, title: string) => {
+    console.log('Удаление колонки с id:', id, 'и заголовком:', title); // Логирование id
+
+    if (PROTECTED_TITLES.includes(title)) {
+      console.warn(`Колонка ${id} защищена и не может быть удалена.`);
+      return;
+    }
 
     const token = localStorage.getItem('token');
 
     const taskColumnId = parseInt(id);
-    console.log('Найденный taskColumnId:', taskColumnId);
 
     if (!token || !taskColumnId) {
       console.error(
@@ -161,7 +168,7 @@ export const Board: FC = () => {
             title={title}
             tasks={filteredTasksByColumn(id)}
             onEditTitle={(newTitle) => handleChangeColumnTitle(id, newTitle)}
-            onDelete={() => handleDeleteColumn(id)}
+            onDelete={() => handleDeleteColumn(id, title)}
           />
         ))}
 

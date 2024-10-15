@@ -14,8 +14,14 @@ const ButtonsBlock = styled.div`
 `;
 
 export const LoginForm: FC = () => {
-  const { emailLogin, setEmailLogin, password, setPassword, error, handleSubmit } =
-    useLogin();
+  const {
+    emailLogin,
+    setEmailLogin,
+    password,
+    setPassword,
+    error,
+    handleSubmit,
+  } = useLogin();
   const { closeModal } = useContext(ModalsContext);
 
   return (
