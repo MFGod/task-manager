@@ -79,37 +79,3 @@ export const handleLogin = async (
     throw new Error('Ошибка при авторизации. Попробуйте снова!');
   }
 };
-
-export const handleLogout = async (router: NextRouter) => {
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
-    router.push('/all');
-    return;
-  }
-
-  try {
-    const response = await fetch('https://localhost:7048/api/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Ошибка при выходе: ${errorText}`);
-    }
-
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
-
-    router.push('/');
-  } catch (error) {
-    console.error('Ошибка при выходе:', error);
-    throw new Error('Ошибка при выходе. Попробуйте снова!');
-  }
-};

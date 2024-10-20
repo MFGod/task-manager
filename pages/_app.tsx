@@ -4,10 +4,10 @@ import { AppProps } from 'next/app';
 
 import { GlobalStyles } from '../styles/global-styles';
 
-import { ModalComponent } from '../src/components/modal';
+import { ModalComponent } from '../src/components/modals';
 
 import store from '../src/store/store';
-import { Task } from '../src/store/taskSlice';
+import { Task } from '../src/store/task-slice';
 
 interface ModalsContextInterface {
   isModalOpen: boolean;
@@ -21,11 +21,11 @@ interface ModalsContextInterface {
   openModal: (
     mode: 'view' | 'edit' | 'add' | 'confirmDelete' | 'registration' | 'login',
     task?: Task | null,
-    onConfirm?: (id: string) => void
+    onConfirm?: (id: number) => void
   ) => void;
   closeModal: () => void;
   editingTask: Task | null;
-  confirmDeleteTaskId: string | null;
+  confirmDeleteTaskId: number | null;
 }
 
 export const ModalsContext = createContext<ModalsContextInterface>({
@@ -43,7 +43,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     'view' | 'edit' | 'add' | 'confirmDelete' | 'registration' | 'login'
   >('add');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [confirmDeleteTaskId, setConfirmDeleteTaskId] = useState<string | null>(
+  const [confirmDeleteTaskId, setConfirmDeleteTaskId] = useState<number | null>(
     null
   );
 

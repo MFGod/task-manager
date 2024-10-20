@@ -2,16 +2,17 @@ import { FC, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ModalsContext } from '../../../pages/_app';
-import { deleteTask } from '../../store/taskSlice';
+import { deleteTask, Task } from '../../store/task-slice';
 
 import { Modal } from '../../modules/modal';
 
-import { ViewModal } from './view';
-import { EditingModal } from './editing';
-import { DeleteModal } from './delete';
-import { AddModal } from './add';
-import { RegistrationModal } from './registration';
-import { LoginModal } from './login';
+import { ViewModal } from './crud/view-modal';
+import { EditingModal } from './crud/editing-modal';
+import { DeleteModal } from './crud/delete-modal';
+
+import { RegistrationModal } from './auth/registration-modal';
+import { LoginModal } from './auth/login-modal';
+import { deleteTaskService } from '../../services/task-service';
 
 export const ModalComponent: FC = () => {
   const {
@@ -24,11 +25,23 @@ export const ModalComponent: FC = () => {
 
   const dispatch = useDispatch();
 
-  const confirmDeleteTask = () => {
+  const confirmDeleteTask = async () => {
     if (confirmDeleteTaskId) {
-      console.log('Confirming deletion of task with ID:', confirmDeleteTaskId);
-      dispatch(deleteTask(confirmDeleteTaskId)); // Удаляем задачу по ID
-      closeModal();
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('Необходим токен и userId для добавления задачи.');
+        return;
+      }
+      try {
+        // Отправка задачи на сервер
+        await deleteTaskService(confirmDeleteTaskId, token);
+        dispatch(deleteTask(confirmDeleteTaskId));
+        closeModal();
+      } catch (error) {
+        console.error('Ошибка при добавлении задачи:', error);
+      }
     }
   };
 
@@ -41,8 +54,6 @@ export const ModalComponent: FC = () => {
       {modalMode === 'edit' && editingTask && (
         <EditingModal editingTask={editingTask} />
       )}
-
-      {modalMode === 'add' && <AddModal />}
 
       {modalMode === 'confirmDelete' && editingTask && (
         <DeleteModal

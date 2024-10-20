@@ -3,8 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import { RegistationButton } from '../src/components/buttons/registration';
-import { LoginButton } from '../src/components/buttons/login';
+import { RegistationButton } from '../src/components/buttons/auth/registration-btn';
+import { LoginButton } from '../src/components/buttons/auth/login-btn';
 
 import { ModalsContext } from './_app';
 

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { LoginForm } from '../../form/login';
+import { LoginForm } from '../../form/auth/login-form';
 
 import { Title, Wrapper } from '../styles';
 

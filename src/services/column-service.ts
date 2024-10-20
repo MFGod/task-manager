@@ -1,10 +1,14 @@
-import { Column } from '../store/columnSlice';
+import { IColumn } from '../store/column-slice';
 
 export const addColumnService = async (
   token: string,
   userId: string,
-  column: Column
-): Promise<Column> => {
+  column: Omit<IColumn, 'id'>
+): Promise<IColumn> => {
+  if (!userId || !token) {
+    throw new Error('Необходимы userId и token');
+  }
+
   const url = 'https://localhost:7048/api/task-columns';
 
   const options: RequestInit = {
@@ -20,14 +24,6 @@ export const addColumnService = async (
     }),
   };
 
-  if (!userId) {
-    throw new Error('userId не установлен');
-  }
-
-  if (!token) {
-    throw new Error('token не установлен');
-  }
-
   if (!column.title) {
     throw new Error('Название колонки не может быть пустым');
   }
@@ -35,9 +31,9 @@ export const addColumnService = async (
   const response = await fetch(url, options);
 
   if (response.ok) {
-    const createdColumn = await response.json(); // Получение данных колонки
-    console.log('Созданная колонка:', createdColumn); 
-    return createdColumn; 
+    const createdColumn = await response.json(); // Получение данных созданной колонки
+    console.log('Созданная колонка:', createdColumn);
+    return createdColumn;
   } else {
     const errorText = await response.text();
     throw new Error(`Ошибка при добавлении колонки: ${errorText}`);
@@ -57,7 +53,7 @@ export const deleteColumnService = async (
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      taskColumnId: taskColumnId, 
+      taskColumnId: taskColumnId,
     }),
   };
 
@@ -75,10 +71,10 @@ export const deleteColumnService = async (
   console.log(`Колонка с ID ${taskColumnId} успешно удалена.`);
 };
 
-export const getColumnsService = async (
+export const getAllColumnsService = async (
   token: string,
   userId: string
-): Promise<Column[]> => {
+): Promise<IColumn[]> => {
   const url = `https://localhost:7048/api/task-columns/all?userId=${userId}`;
 
   const options: RequestInit = {
@@ -98,19 +94,43 @@ export const getColumnsService = async (
 
   const data = await response.json();
 
-  if (data.userId.toString() !== userId) {
-    throw new Error('Полученный userId не совпадает с переданным userId.');
-  }
-
-  // Получаем колонки из userTaskColumns
-  const userColumns: Column[] = data.userTaskColumns.map(
-    (column: { id: number; name: string; content: string }) => ({
+  // Получаем все колонки из taskColumns
+  const userColumns: IColumn[] = data.taskColumns.map(
+    (column: { id: number; name: string; description: string }) => ({
       id: column.id,
       title: column.name,
-      content: column.content,
+      description: column.description,
     })
   );
 
-  console.log(userColumns);
   return userColumns;
+};
+
+export const getColumnByIdService = async (
+  token: string,
+  taskColumnId: number
+): Promise<IColumn> => {
+  const url = `https://localhost:7048/api/task-columns?TaskColumnId=${taskColumnId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: `GET`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Ошибка получения колонки: ${errorText}`);
+    }
+
+    const columnData: IColumn = await response.json();
+    console.log(`Колонка ${columnData} успешно получена.`);
+    return columnData;
+  } catch (error) {
+    console.error('Ошибка при получении колонки:', error);
+    throw new Error('Не удалось получить колонку.');
+  }
 };

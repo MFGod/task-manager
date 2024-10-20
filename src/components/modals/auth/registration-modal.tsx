@@ -1,6 +1,6 @@
-import { Title, Wrapper } from '../styles';
+import { RegistrationForm } from '../../form/auth/registration-form';
 
-import { RegistrationForm } from '../../form/registration';
+import { Title, Wrapper } from '../styles';
 
 export const RegistrationModal = () => {
   return (

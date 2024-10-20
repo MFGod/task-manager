@@ -1,10 +1,9 @@
 import { FC, FormEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
-import { Task } from '../../../store/taskSlice';
+import { Task } from '../../../store/task-slice';
 
-import { getCurrentDate } from '../../../utils/dateUtils';
+import { getCurrentDate } from '../../../utils/date-utils';
 
 import { Input, StButton, StForm, Wrapper } from '../styles';
 
@@ -24,18 +23,23 @@ const Label = styled.label`
 interface TaskFormProps {
   onAdd: (task: Task) => void;
   editingTask?: Task | null;
+  columnId: number;
 }
 
-export const TaskForm: FC<TaskFormProps> = ({ onAdd, editingTask }) => {
+export const TaskForm: FC<TaskFormProps> = ({
+  onAdd,
+  editingTask,
+  columnId,
+}) => {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [complitedAt, setComplitedAt] = useState('');
 
   useEffect(() => {
     if (editingTask) {
       setTaskTitle(editingTask.title);
       setTaskDescription(editingTask.description);
-      setDueDate(editingTask.dueDate || '');
+      setComplitedAt(editingTask.complitedAt || '');
     }
   }, [editingTask]);
 
@@ -44,14 +48,14 @@ export const TaskForm: FC<TaskFormProps> = ({ onAdd, editingTask }) => {
     if (taskTitle.trim() !== '' && taskDescription.trim() !== '') {
       const newTask: Task = {
         userId: localStorage.getItem('userId') || '',
-        id: editingTask ? editingTask.id : uuidv4(),
+        id: editingTask?.id || Date.now(),
         title: taskTitle,
         description: taskDescription,
-        createdDate: editingTask ? editingTask.createdDate : getCurrentDate(),
-        dueDate: dueDate,
+        columnId: columnId,
+        createdAt: editingTask ? editingTask.createdAt : getCurrentDate(),
+        complitedAt: complitedAt,
         completed: false,
         deleted: false,
-        column: 'todo',
       };
       onAdd(newTask);
     }
@@ -77,9 +81,9 @@ export const TaskForm: FC<TaskFormProps> = ({ onAdd, editingTask }) => {
           <Label>Срок завершения:</Label>
           <Input
             type="date"
-            value={dueDate}
+            value={complitedAt}
             placeholder="Cрок завершения"
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={(e) => setComplitedAt(e.target.value)}
           />
         </DateBlock>
       </Wrapper>

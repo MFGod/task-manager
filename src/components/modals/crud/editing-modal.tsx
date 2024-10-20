@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Task, updateTask } from '../../../store/taskSlice';
+import { Task, updateTask } from '../../../store/task-slice';
 
 import { ModalsContext } from '../../../../pages/_app';
 
@@ -32,7 +32,11 @@ export const EditingModal: FC<EditingModalInterface> = ({ editingTask }) => {
   return (
     <Wrapper>
       <Title>Редактирование</Title>
-      <TaskForm onAdd={handleAddOrUpdateTask} editingTask={editingTask} />
+      <TaskForm
+        onAdd={handleAddOrUpdateTask}
+        editingTask={editingTask}
+        columnId={editingTask.columnId}
+      />
     </Wrapper>
   );
 };

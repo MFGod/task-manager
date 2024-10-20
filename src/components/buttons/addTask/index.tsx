@@ -1,7 +1,9 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 
 import { StAddColumn } from '../../../../public/assets/addColumn';
+
+import { AddTaskModal } from '../../modals/crud/add-modal';
 
 const StButton = styled.button`
   display: flex;
@@ -30,14 +32,24 @@ const StButton = styled.button`
   }
 `;
 
-interface AddTaskButtonInterface {
-  onClick: () => void;
+interface Props {
+  columnId: number;
 }
 
-export const AddTaskButton: FC<AddTaskButtonInterface> = ({ onClick }) => {
+export const AddTaskButton = ({ columnId }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <StButton onClick={onClick}>
-      Добавить <StAddColumn />
-    </StButton>
+    <>
+      <StButton onClick={() => setIsOpen(true)}>
+        Добавить <StAddColumn />
+      </StButton>
+
+      <AddTaskModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        columnId={columnId}
+      />
+    </>
   );
 };

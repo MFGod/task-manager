@@ -7,9 +7,9 @@ import { List } from '../../../styles/styles';
 import { StEditIcon } from '../../../public/assets/edit';
 import { StDeleteIcon } from '../../../public/assets/delete';
 
-import { calculateDaysLeft, formatDate } from '../../utils/dateUtils';
+import { calculateDaysLeft, formatDate } from '../../utils/date-utils';
 
-import { Task } from '../../store/taskSlice';
+import { Task } from '../../store/task-slice';
 
 const StList = styled(List)<{ border: string }>`
   border-radius: 6px;
@@ -67,13 +67,13 @@ export const TaskItem: FC<TaskItemProps> = ({
 }) => {
   const [{}, drag] = useDrag({
     type: 'TASK',
-    item: { id: task.id, column: task.column },
+    item: { id: task.id, column: task.columnId },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-  const daysLeft = calculateDaysLeft(task.dueDate || '');
+  const daysLeft = calculateDaysLeft(task.complitedAt || '');
 
   const borderColor = useMemo(() => {
     if (daysLeft <= 3) {
@@ -89,7 +89,7 @@ export const TaskItem: FC<TaskItemProps> = ({
     <StList ref={drag} border={borderColor}>
       <TaskBlock onClick={() => onView(task)}>
         <Title>{task.title}</Title>
-        <p>{task.dueDate ? formatDate(task.dueDate) : ''} </p>
+        <p>{task.complitedAt ? formatDate(task.complitedAt) : ''} </p>
       </TaskBlock>
       <Wrapper>
         <StEditIcon

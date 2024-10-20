@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { Task } from '../../../store/taskSlice';
+import { Task } from '../../../store/task-slice';
+
+import { formatDate } from '../../../utils/date-utils';
 
 import { Text, Title, Wrapper } from '../styles';
-import { formatDate } from '../../../utils/dateUtils';
 
 const StBlock = styled.div`
   display: flex;
@@ -26,12 +27,12 @@ export const ViewModal: FC<ViewModalInterface> = ({ editingTask }) => {
           <strong>Описание:</strong> {editingTask.description}
         </Text>
         <Text>
-          <strong>Дата добавления:</strong> {editingTask.createdDate}
+          <strong>Дата добавления:</strong> {editingTask.createdAt}
         </Text>
         <Text>
-          <strong>Срок завершения:</strong>{' '}
-          {editingTask.dueDate
-            ? formatDate(editingTask.dueDate)
+          <strong>Срок завершения:</strong>
+          {editingTask.complitedAt
+            ? formatDate(editingTask.complitedAt)
             : 'Не установлен'}
         </Text>
       </StBlock>

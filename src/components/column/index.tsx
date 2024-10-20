@@ -5,10 +5,9 @@ import styled from 'styled-components';
 
 import { StDeleteColumn } from '../../../public/assets/deleteColumn';
 
-import { PROTECTED_TITLES } from '../../store/columnSlice';
-import { moveTask, Task } from '../../store/taskSlice';
+import { moveTask, Task } from '../../store/task-slice';
 
-import TaskList from '../taskList';
+import TaskList from '../task/task-list';
 
 const Wrapper = styled.li`
   position: relative;
@@ -41,25 +40,26 @@ const TitleInput = styled.input`
 `;
 
 interface ColumnProps {
+  id: number;
   title: string;
   tasks: Task[];
-  id: string;
   onEditTitle: (newTitle: string) => void;
   onDelete: () => void;
 }
 
 const Column: FC<ColumnProps> = ({
+  id,
   title,
   tasks,
-  id,
   onEditTitle,
   onDelete,
 }) => {
   const dispatch = useDispatch();
+
   const [{}, drop] = useDrop({
     accept: 'TASK',
-    drop: (item: { id: string; column: string }) => {
-      if (item.column !== id) {
+    drop: (item: { id: number; column: string }) => {
+      if (item.column !== id.toString()) {
         dispatch(
           moveTask({ taskId: item.id, source: item.column, destination: id })
         );
@@ -71,20 +71,17 @@ const Column: FC<ColumnProps> = ({
     }),
   });
 
-
-
   return (
     <Wrapper ref={drop}>
-      {!PROTECTED_TITLES.includes(title) && (
-        <StDeleteColumn onClick={onDelete}>Удалить</StDeleteColumn>
-      )}
+      <StDeleteColumn onClick={onDelete}>Удалить</StDeleteColumn>
+
       <TitleInput
         type="text"
         defaultValue={title}
         onBlur={(e) => onEditTitle(e.target.value)}
       />
 
-      <TaskList tasks={tasks} columnId={id} />
+      <TaskList tasks={tasks} columnTitle={title} columnId={id} />
     </Wrapper>
   );
 };

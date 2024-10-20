@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { ModalsContext } from '../../pages/_app';
 
-import { handleLogin } from '../services/authService';
+import { handleLogin } from '../services/auth-service';
 
 export const useLogin = () => {
   const { closeModal } = useContext(ModalsContext);

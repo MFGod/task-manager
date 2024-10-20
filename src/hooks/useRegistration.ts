@@ -1,8 +1,9 @@
 import { FormEvent, useContext, useState } from 'react';
-
-import { handleRegistration } from '../services/authService';
 import { useRouter } from 'next/router';
+
 import { ModalsContext } from '../../pages/_app';
+
+import { handleRegistration } from '../services/auth-service';
 
 export const useRegistration = () => {
   const [username, setUsername] = useState('');

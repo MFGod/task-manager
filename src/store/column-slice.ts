@@ -1,39 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface Column {
+export interface IColumn {
   userId?: string;
-  id: string;
+  id: number;
   title: string;
 }
 
 interface ColumnState {
-  columns: Column[];
+  columns: IColumn[];
 }
 
 const initialState: ColumnState = {
-  columns: [
-    { id: 'todo', title: 'Нужно сделать' },
-    { id: 'inProgress', title: 'В процессе' },
-    { id: 'completed', title: 'Завершенные' },
-  ],
+  columns: [],
 };
-
-export const columnIdMap: { [key: string]: number } = {
-  todo: 1,
-  inProgress: 2,
-  completed: 3,
-};
-
-export const PROTECTED_TITLES = ['Нужно сделать', 'В процессе', 'Завершенные']; //Колонки с заголовками, которые нельзя удалять
 
 const columnsSlice = createSlice({
   name: 'columns',
   initialState,
   reducers: {
-    setColumns(state, action: PayloadAction<Column[]>) {
+    setColumns(state, action: PayloadAction<IColumn[]>) {
       state.columns = action.payload;
     },
-    addColumn(state, action: PayloadAction<Column>) {
+    addColumn(state, action: PayloadAction<IColumn>) {
       const existingColumn = state.columns.find(
         (column) => column.id === action.payload.id
       );
@@ -45,7 +33,7 @@ const columnsSlice = createSlice({
       }
     },
 
-    updateColumn(state, action: PayloadAction<Column>) {
+    updateColumn(state, action: PayloadAction<IColumn>) {
       const { id, title } = action.payload;
       const column = state.columns.find((column) => column.id === id);
       if (column) {
@@ -54,7 +42,7 @@ const columnsSlice = createSlice({
         console.warn(`Колонка с ${id} не найдена.`);
       }
     },
-    deleteColumn(state, action: PayloadAction<string>) {
+    deleteColumn(state, action: PayloadAction<number>) {
       state.columns = state.columns.filter(
         (column) => column.id !== action.payload
       );

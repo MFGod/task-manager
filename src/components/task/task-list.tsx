@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 import { ModalsContext } from '../../../pages/_app';
 
-import { Task } from '../../store/taskSlice';
+import { Task } from '../../store/task-slice';
 
 import { AddTaskButton } from '../buttons/addTask';
 
-import { TaskItem } from '../taskItem';
+import { TaskItem } from './task-item';
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,7 +21,8 @@ const Text = styled.p`
 
 interface TaskListInterface {
   tasks: Task[];
-  columnId: string;
+  columnTitle: string;
+  columnId: number;
 }
 
 const TaskList: FC<TaskListInterface> = ({ tasks, columnId }) => {
@@ -39,26 +40,26 @@ const TaskList: FC<TaskListInterface> = ({ tasks, columnId }) => {
     openModal('confirmDelete', task);
   };
 
-  // Условие для рендеринга кнопки "Добавить задачу"
-  const isFirstColumn = columnId === 'todo';
-
   return (
     <Wrapper>
       {tasks.length > 0 ? (
-        tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onDelete={handleDeleteTaskRequest}
-            onEdit={handleEditTask}
-            onView={handleViewTask}
-          />
-        ))
+        tasks.map((task) => {
+          console.log(`Rendering task with id: ${task.id}`);
+          return (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onDelete={handleDeleteTaskRequest}
+              onEdit={handleEditTask}
+              onView={handleViewTask}
+            />
+          );
+        })
       ) : (
         <Text>Нет задач для отображения.</Text>
       )}
 
-      {isFirstColumn && <AddTaskButton onClick={() => openModal('add')} />}
+      <AddTaskButton columnId={columnId} />
     </Wrapper>
   );
 };

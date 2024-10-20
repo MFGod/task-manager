@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { FilterType } from '../../../utils/taskUtils';
+import { FilterType } from '../../../utils/task-utils';
 
 const FilterList = styled.ul`
   display: flex;

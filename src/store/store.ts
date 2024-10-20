@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import tasksReducer from './taskSlice';
-import columnReducer from './columnSlice';
+import tasksReducer from './task-slice';
+import columnReducer from './column-slice';
 
 const store = configureStore({
   reducer: {
@@ -10,7 +10,7 @@ const store = configureStore({
   },
 });
 
-export type RootState = ReturnType<typeof store.getState>; // Тип состояния
-export type AppDispatch = typeof store.dispatch; // Тип dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

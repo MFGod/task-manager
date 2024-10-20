@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import { Board } from '../../src/components/board';
+
 import { StButton } from '../../src/components/form/styles';
-import { handleLogout } from '../../src/services/authService';
 
 const Wrapper = styled.div`
   margin: 20px 40px;
@@ -22,12 +22,10 @@ const AllPage = () => {
     }
   }, [router]);
 
-  const onLogout = async () => {
-    try {
-      await handleLogout(router);
-    } catch (error) {
-      console.error('Ошибка при выходе:', error);
-    }
+  const onLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    router.push('/');
   };
 
   return (

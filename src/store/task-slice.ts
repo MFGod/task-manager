@@ -1,19 +1,19 @@
 // Импортируем необходимые функции и типы из Redux Toolkit
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { getCurrentDate } from '../utils/dateUtils';
+import { getCurrentDate } from '../utils/date-utils';
 
 export interface Task {
   userId: string;
-  id: string;
+  id: number;
   title: string;
   description: string;
-  createdDate: string;
-  dueDate?: string;
+  columnId: number;
+  createdAt: string;
+  complitedAt?: string;
   completed: boolean;
-  deleted: boolean;
   inProgress?: boolean;
-  column: string;
+  deleted: boolean;
 }
 
 interface TasksState {
@@ -21,9 +21,9 @@ interface TasksState {
 }
 
 interface MoveTaskPayload {
-  taskId: string;
+  taskId: number;
   source: string;
-  destination: string;
+  destination: number;
 }
 
 const initialState: TasksState = {
@@ -54,14 +54,14 @@ const tasksSlice = createSlice({
       const newTask: Task = {
         ...action.payload,
         userId,
-        createdDate: getCurrentDate(),
-        column: 'todo',
+        columnId: action.payload.columnId,
+        createdAt: getCurrentDate(),
       };
 
-      state.tasks.push(newTask);
+      state.tasks = state.tasks.concat(newTask);
     },
 
-    deleteTask(state, action: PayloadAction<string>) {
+    deleteTask(state, action: PayloadAction<number>) {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
     },
 
@@ -85,9 +85,9 @@ const tasksSlice = createSlice({
       }
 
       // Обновляем значения задачи
-      task.column = destination;
-      task.completed = destination === 'completed';
-      task.inProgress = destination === 'inProgress';
+      task.columnId = destination;
+      task.inProgress = destination === 2;
+      task.completed = destination === 3;
 
       console.log(`Задача ${taskId} перемещена в ${destination}`);
     },

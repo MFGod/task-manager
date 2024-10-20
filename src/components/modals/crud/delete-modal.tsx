@@ -1,7 +1,6 @@
 import { FC, useContext } from 'react';
 import styled from 'styled-components';
-
-import { Task } from '../../../store/taskSlice';
+import { Task } from '../../../store/task-slice';
 
 import { ModalsContext } from '../../../../pages/_app';
 
@@ -26,6 +25,7 @@ export const DeleteModal: FC<DeleteModalInterface> = ({
   confirmDeleteTask,
 }) => {
   const { closeModal } = useContext(ModalsContext);
+
   return (
     <Wrapper>
       <Title>Удалить задачу?</Title>

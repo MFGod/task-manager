@@ -21,13 +21,15 @@ export const formatDate = (dateString: string): string => {
   return `${day}.${month}.${year}`;
 };
 
-export const calculateDaysLeft = (dueDate: string) => {
+export const calculateDaysLeft = (complitedAt: string) => {
+  console.log('[calculateDaysLeft]', complitedAt);
+
   const today = new Date();
 
-  const deadline = new Date(dueDate);
+  const deadline = new Date(complitedAt);
 
   if (isNaN(deadline.getTime())) {
-    throw new Error('Invalid due date provided');
+    throw new Error('Указана неверная дата завершения!');
   }
 
   const difference = deadline.getTime() - today.getTime();

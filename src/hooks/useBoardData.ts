@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { getColumnsService } from '../services/columnService';
-import { getTasksService } from '../services/taskService';
+import {
+  getAllColumnsService,
+  getColumnByIdService,
+} from '../services/column-service';
+import { getTasksService } from '../services/task-service';
 
-import { setColumns } from '../store/columnSlice';
-import { setTasks } from '../store/taskSlice';
+import { setColumns } from '../store/column-slice';
+import { setTasks } from '../store/task-slice';
 
 export const useBoardData = () => {
   const dispatch = useDispatch();
@@ -14,16 +17,15 @@ export const useBoardData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Загружаем колонок из API
-  const loadColumns = async () => {
+  // Загрузка всех колонок из API
+  const loadAllColumns = async () => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
 
     if (token && userId) {
       try {
         setLoading(true);
-        console.log('Hello World');
-        const columnsData = await getColumnsService(token, userId);
+        const columnsData = await getAllColumnsService(token, userId);
         console.log('Полученные колонки:', columnsData);
         dispatch(setColumns(columnsData));
       } catch (error) {
@@ -35,12 +37,30 @@ export const useBoardData = () => {
     }
   };
 
+  // Загразка одной колонки по ее ID
+  const loadColumnById = async (taskColumnId: number) => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      try {
+        setLoading(true);
+        const columnData = await getColumnByIdService(token, taskColumnId);
+        console.log('Колонка успешно загружена', columnData);
+        dispatch(setColumns([columnData]));
+      } catch (error) {
+        setError(error as Error);
+        console.error('Ошибка при загрузке колонки:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   // Загрузка задач из API
   const loadTasks = async () => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    console.log('Token:', token);
-    console.log('User ID:', userId);
+
     if (token && userId) {
       try {
         const tasksData = await getTasksService(token, userId); // Получаем задачи по userId
@@ -54,9 +74,9 @@ export const useBoardData = () => {
 
   // Загрузка колонок и задач при монтировании компонента
   useEffect(() => {
-    loadColumns();
+    loadAllColumns();
     loadTasks();
   }, [dispatch]);
 
-  return { loading, error };
+  return { loading, error, loadColumnById };
 };

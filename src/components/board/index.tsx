@@ -1,7 +1,6 @@
 import React, { FC, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 import { StAddColumn } from '../../../public/assets/addColumn';
 
@@ -11,25 +10,20 @@ import { useAppSelector } from '../../store/hooks';
 
 import {
   addColumn,
+  IColumn,
   deleteColumn,
-  PROTECTED_TITLES,
   updateColumn,
-} from '../../store/columnSlice';
+} from '../../store/column-slice';
 
-import {
-  filterTaskByFilter,
-  filterTasksByColumn,
-  FilterType,
-} from '../../utils/taskUtils';
+import { filterTaskByFilter, FilterType } from '../../utils/task-utils';
 
 import {
   addColumnService,
   deleteColumnService,
-} from '../../services/columnService';
-
-import Column from '../column';
+} from '../../services/column-service';
 
 import { TaskFilter } from './filter';
+import Column from '../column';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -72,14 +66,17 @@ const List = styled.ul`
 `;
 
 export const Board: FC = () => {
-  const [columnTitle, setColumnTitle] = useState('Название');
-  const [filter, setFilter] = useState<FilterType>('all');
   const dispatch = useDispatch();
 
   const tasks = useAppSelector((state) => state.tasks.tasks);
   const columns = useAppSelector((state) => state.columns.columns);
 
-  useBoardData();
+  console.log(columns);
+
+  const [columnTitle, setColumnTitle] = useState('Название');
+  const [filter, setFilter] = useState<FilterType>('all');
+
+  const { loadColumnById } = useBoardData();
 
   const handleAddColumn = async () => {
     if (columnTitle.trim()) {
@@ -91,8 +88,7 @@ export const Board: FC = () => {
         return; // Выход из функции, если токен или userId отсутствуют
       }
 
-      const newColumn = {
-        id: uuidv4(),
+      const newColumn: Omit<IColumn, 'id'> = {
         title: columnTitle,
       };
 
@@ -106,21 +102,16 @@ export const Board: FC = () => {
     }
   };
 
-  const handleChangeColumnTitle = (id: string, newTitle: string) => {
+  const handleChangeColumnTitle = (id: number, newTitle: string) => {
     dispatch(updateColumn({ id, title: newTitle }));
   };
 
-  const handleDeleteColumn = async (id: string, title: string) => {
+  const handleDeleteColumn = async (id: number, title: string) => {
     console.log('Удаление колонки с id:', id, 'и заголовком:', title); // Логирование id
-
-    if (PROTECTED_TITLES.includes(title)) {
-      console.warn(`Колонка ${id} защищена и не может быть удалена.`);
-      return;
-    }
 
     const token = localStorage.getItem('token');
 
-    const taskColumnId = parseInt(id);
+    const taskColumnId = id;
 
     if (!token || !taskColumnId) {
       console.error(
@@ -149,9 +140,6 @@ export const Board: FC = () => {
     [tasks]
   );
 
-  const filteredTasksByColumn = (columnId: string) =>
-    filterTasksByColumn(tasks, filter, columnId);
-
   return (
     <Wrapper>
       <TaskFilter
@@ -161,17 +149,27 @@ export const Board: FC = () => {
       />
 
       <List>
-        {columns.map(({ id, title }) => (
-          <Column
-            key={id}
-            id={id}
-            title={title}
-            tasks={filteredTasksByColumn(id)}
-            onEditTitle={(newTitle) => handleChangeColumnTitle(id, newTitle)}
-            onDelete={() => handleDeleteColumn(id, title)}
-          />
-        ))}
+        {columns.map(({ id, title }) => {
+          // Фильтруем задачи по текущей колонке, используя columnId
+          const filteredTasks = tasks.filter((task) => task.columnId === id);
 
+          // Логирование задач для текущей колонки
+          console.log(
+            `Задачи в колонке "${title}" (ID: ${id}):`,
+            filteredTasks
+          );
+
+          return (
+            <Column
+              key={id}
+              id={id}
+              title={title}
+              tasks={filteredTasks} // Передаем отфильтрованные задачи
+              onEditTitle={(newTitle) => handleChangeColumnTitle(id, newTitle)}
+              onDelete={() => handleDeleteColumn(id, title)}
+            />
+          );
+        })}
         <StAddColumn onClick={handleAddColumn} />
       </List>
     </Wrapper>
