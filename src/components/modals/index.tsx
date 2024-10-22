@@ -2,7 +2,7 @@ import { FC, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ModalsContext } from '../../../pages/_app';
-import { deleteTask, Task } from '../../store/task-slice';
+import { deleteTask } from '../../store/task-slice';
 
 import { Modal } from '../../modules/modal';
 
@@ -13,6 +13,8 @@ import { DeleteModal } from './crud/delete-modal';
 import { RegistrationModal } from './auth/registration-modal';
 import { LoginModal } from './auth/login-modal';
 import { deleteTaskService } from '../../services/task-service';
+import { getToken } from '../../hooks/getToken';
+import { getUserId } from '../../hooks/getUserId';
 
 export const ModalComponent: FC = () => {
   const {
@@ -27,13 +29,14 @@ export const ModalComponent: FC = () => {
 
   const confirmDeleteTask = async () => {
     if (confirmDeleteTaskId) {
-      const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const { token } = getToken();
+      const { userId } = getUserId();
 
       if (!token || !userId) {
         console.error('Необходим токен и userId для добавления задачи.');
         return;
       }
+
       try {
         // Отправка задачи на сервер
         await deleteTaskService(confirmDeleteTaskId, token);

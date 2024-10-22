@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 import { Modal } from '../../../modules/modal';
 
+import { getToken } from '../../../hooks/getToken';
+import { getUserId } from '../../../hooks/getUserId';
+
 import { addTask, Task } from '../../../store/task-slice';
 
 import { getCurrentDate } from '../../../utils/date-utils';
@@ -35,8 +38,8 @@ export const AddTaskModal = ({ isOpen, onClose, columnId }: Props) => {
   const handleAddTask = async (
     task: Omit<NewTask, 'userId' | 'createdDate' | 'column'>
   ) => {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    const { token } = getToken();
+    const { userId } = getUserId();
 
     if (!token || !userId) {
       console.error('Необходим токен и userId для добавления задачи.');

@@ -5,10 +5,6 @@ export const addColumnService = async (
   userId: string,
   column: Omit<IColumn, 'id'>
 ): Promise<IColumn> => {
-  if (!userId || !token) {
-    throw new Error('Необходимы userId и token');
-  }
-
   const url = 'https://localhost:7048/api/task-columns';
 
   const options: RequestInit = {
@@ -19,7 +15,7 @@ export const addColumnService = async (
     },
     body: JSON.stringify({
       userId: userId,
-      name: column.title,
+      title: column.title,
       description: null,
     }),
   };
@@ -96,9 +92,9 @@ export const getAllColumnsService = async (
 
   // Получаем все колонки из taskColumns
   const userColumns: IColumn[] = data.taskColumns.map(
-    (column: { id: number; name: string; description: string }) => ({
+    (column: { id: number; title: string; description: string }) => ({
       id: column.id,
-      title: column.name,
+      title: column.title,
       description: column.description,
     })
   );
@@ -133,4 +129,37 @@ export const getColumnByIdService = async (
     console.error('Ошибка при получении колонки:', error);
     throw new Error('Не удалось получить колонку.');
   }
+};
+
+export const updateColumnsService = async (
+  token: string,
+  userId: string,
+  taskColumnId: number,
+  newTitle: string
+) => {
+  const url = `https://localhost:7048/api/task-columns`;
+
+  const options: RequestInit = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      userId,
+      taskColumnId,
+      title: newTitle,
+    }),
+  };
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Ошибка обновления колонки: ${errorText}`);
+  }
+
+  const updatedColumn = await response.json();
+  console.log('Колонка успешно обновлена:', updatedColumn);
+  return updatedColumn;
 };

@@ -20,10 +20,15 @@ import { filterTaskByFilter, FilterType } from '../../utils/task-utils';
 import {
   addColumnService,
   deleteColumnService,
+  updateColumnsService,
 } from '../../services/column-service';
 
-import { TaskFilter } from './filter';
+import { getToken } from '../../hooks/getToken';
+import { getUserId } from '../../hooks/getUserId';
+
 import Column from '../column';
+
+import { TaskFilter } from './filter';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -76,12 +81,12 @@ export const Board: FC = () => {
   const [columnTitle, setColumnTitle] = useState('Название');
   const [filter, setFilter] = useState<FilterType>('all');
 
-  const { loadColumnById } = useBoardData();
+  useBoardData();
 
   const handleAddColumn = async () => {
     if (columnTitle.trim()) {
-      const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const { token } = getToken();
+      const { userId } = getUserId();
 
       if (!token || !userId) {
         console.error('Необходим токен и userId для добавления колонки.');
@@ -102,14 +107,33 @@ export const Board: FC = () => {
     }
   };
 
-  const handleChangeColumnTitle = (id: number, newTitle: string) => {
-    dispatch(updateColumn({ id, title: newTitle }));
+  const handleChangeColumnTitle = async (id: number, newTitle: string) => {
+    const { token } = getToken();
+    const { userId } = getUserId();
+
+    if (!token || !userId) {
+      console.error('Необходим токен и userId для обновления колонки.');
+      return;
+    }
+
+    const taskColumnId = id;
+    try {
+      const updatedColumn = await updateColumnsService(
+        token,
+        userId,
+        taskColumnId,
+        newTitle
+      );
+      dispatch(updateColumn({ id, title: updatedColumn.title })); // Обновляем состояние в Redux
+    } catch (error) {
+      console.error('Ошибка при обновлении колонки:', error);
+    }
   };
 
   const handleDeleteColumn = async (id: number, title: string) => {
     console.log('Удаление колонки с id:', id, 'и заголовком:', title); // Логирование id
 
-    const token = localStorage.getItem('token');
+    const { token } = getToken();
 
     const taskColumnId = id;
 
@@ -132,10 +156,10 @@ export const Board: FC = () => {
   // Подсчет задач для каждого фильтра
   const tasksCount = useMemo(
     () => ({
+      all: filterTaskByFilter(tasks, 'all').length,
       recentlyAdded: filterTaskByFilter(tasks, 'recentlyAdded').length,
       today: filterTaskByFilter(tasks, 'today').length,
       week: filterTaskByFilter(tasks, 'week').length,
-      all: filterTaskByFilter(tasks, 'all').length,
     }),
     [tasks]
   );
@@ -150,21 +174,15 @@ export const Board: FC = () => {
 
       <List>
         {columns.map(({ id, title }) => {
-          // Фильтруем задачи по текущей колонке, используя columnId
-          const filteredTasks = tasks.filter((task) => task.columnId === id);
-
-          // Логирование задач для текущей колонки
-          console.log(
-            `Задачи в колонке "${title}" (ID: ${id}):`,
-            filteredTasks
-          );
+          // Фильтруем задачи по текущей колонке
+          const filteredTasks = filterTaskByFilter(tasks, filter);
 
           return (
             <Column
               key={id}
               id={id}
               title={title}
-              tasks={filteredTasks} // Передаем отфильтрованные задачи
+              tasks={filteredTasks.filter((task) => task.columnId === id)} // Передаем отфильтрованные задачи
               onEditTitle={(newTitle) => handleChangeColumnTitle(id, newTitle)}
               onDelete={() => handleDeleteColumn(id, title)}
             />

@@ -10,6 +10,9 @@ import { getTasksService } from '../services/task-service';
 import { setColumns } from '../store/column-slice';
 import { setTasks } from '../store/task-slice';
 
+import { getToken } from './getToken';
+import { getUserId } from './getUserId';
+
 export const useBoardData = () => {
   const dispatch = useDispatch();
 
@@ -19,8 +22,8 @@ export const useBoardData = () => {
 
   // Загрузка всех колонок из API
   const loadAllColumns = async () => {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    const { token } = getToken();
+    const { userId } = getUserId();
 
     if (token && userId) {
       try {
@@ -39,7 +42,7 @@ export const useBoardData = () => {
 
   // Загразка одной колонки по ее ID
   const loadColumnById = async (taskColumnId: number) => {
-    const token = localStorage.getItem('token');
+    const { token } = getToken();
 
     if (token) {
       try {
@@ -58,8 +61,8 @@ export const useBoardData = () => {
 
   // Загрузка задач из API
   const loadTasks = async () => {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    const { token } = getToken();
+    const { userId } = getUserId();
 
     if (token && userId) {
       try {

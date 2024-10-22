@@ -1,3 +1,5 @@
+import { getUserId } from '../hooks/getUserId';
+
 import { Task } from '../store/task-slice';
 
 interface CreateTaskResponse {
@@ -17,7 +19,7 @@ export const addTaskService = async (
   if (!task.title) {
     throw new Error('Заголовок должен быть заполнен');
   }
-  const userId = localStorage.getItem('userId');
+  const { userId } = getUserId();
 
   const response = await fetch('https://localhost:7048/api/user-tasks', {
     method: 'POST',

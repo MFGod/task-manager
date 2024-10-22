@@ -2,7 +2,7 @@ import { Task } from '../store/task-slice';
 
 import { calculateDaysLeft } from './date-utils';
 
-export type FilterType = 'recentlyAdded' | 'today' | 'week' | 'all';
+export type FilterType = 'all' | 'recentlyAdded' | 'today' | 'week';
 
 const filterByDate = (tasks: Task[], filter: FilterType): Task[] => {
   return tasks.filter((task) => {

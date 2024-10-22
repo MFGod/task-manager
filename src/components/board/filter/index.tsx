@@ -65,10 +65,10 @@ export const TaskFilter: FC<TaskFilterInterface> = ({
           isActive={currentFilter === key}
           onClick={() => onFilterChange(key as FilterType)}
         >
+          {key === 'all' && 'Все задачи'}
           {key === 'recentlyAdded' && 'Недавно добавленные'}
           {key === 'today' && 'Сделать сегодня'}
           {key === 'week' && 'Сделать на неделе'}
-          {key === 'all' && 'Все задачи'}
           <Number>{count}</Number>
         </Item>
       ))}

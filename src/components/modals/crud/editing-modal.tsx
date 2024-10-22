@@ -8,6 +8,7 @@ import { ModalsContext } from '../../../../pages/_app';
 import { TaskForm } from '../../form/task';
 
 import { Title, Wrapper } from '../styles';
+import { getUserId } from '../../../hooks/getUserId';
 
 interface EditingModalInterface {
   editingTask: Task;
@@ -18,7 +19,7 @@ export const EditingModal: FC<EditingModalInterface> = ({ editingTask }) => {
   const dispatch = useDispatch();
 
   const handleAddOrUpdateTask = (task: Task) => {
-    const userId = localStorage.getItem('userId') || '';
+    const { userId } = getUserId();
 
     if (!userId) {
       console.error('User ID not found in localStorage');
