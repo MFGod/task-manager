@@ -5,11 +5,14 @@ import { Task, updateTask } from '../../../store/task-slice';
 
 import { ModalsContext } from '../../../../pages/_app';
 
+import { getUserId } from '../../../hooks/getUserId';
+import { getToken } from '../../../hooks/getToken';
+
+import { updatedTaskService } from '../../../services/task-service';
+
 import { TaskForm } from '../../form/task';
 
 import { Title, Wrapper } from '../styles';
-import { getUserId } from '../../../hooks/getUserId';
-
 interface EditingModalInterface {
   editingTask: Task;
 }
@@ -18,23 +21,36 @@ export const EditingModal: FC<EditingModalInterface> = ({ editingTask }) => {
   const { closeModal } = useContext(ModalsContext);
   const dispatch = useDispatch();
 
-  const handleAddOrUpdateTask = (task: Task) => {
-    const { userId } = getUserId();
+  const handleUpdateTask = async (task: Task) => {
+    try {
+      const { token } = getToken();
+      const { userId } = getUserId();
 
-    if (!userId) {
-      console.error('User ID not found in localStorage');
-      return;
+      if (!token) {
+        console.error('Token отсутствует.');
+        throw new Error('Требуется аутентификация. Попробуйте еще раз.');
+      }
+
+      if (!userId) {
+        console.error('User ID отсутствует.');
+        throw new Error(
+          'Требуется идентификатор пользователя. Пожалуйста, убедитесь, что вы вошли в систему.'
+        );
+      }
+
+      const updatedTask = await updatedTaskService(token, task.id, task);
+      dispatch(updateTask(updatedTask));
+      closeModal();
+    } catch (error) {
+      console.error('Error updating task:', error);
     }
-
-    dispatch(updateTask({ ...task, userId }));
-    closeModal();
   };
 
   return (
     <Wrapper>
       <Title>Редактирование</Title>
       <TaskForm
-        onAdd={handleAddOrUpdateTask}
+        onAdd={handleUpdateTask}
         editingTask={editingTask}
         columnId={editingTask.columnId}
       />

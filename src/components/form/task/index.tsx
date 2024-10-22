@@ -52,7 +52,7 @@ export const TaskForm: FC<TaskFormProps> = ({
         title: taskTitle,
         description: taskDescription,
         columnId: columnId,
-        createdAt: editingTask ? editingTask.createdAt : getCurrentDate(),
+        createdAt: getCurrentDate(),
         complitedAt: complitedAt,
         completed: false,
         deleted: false,

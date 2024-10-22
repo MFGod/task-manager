@@ -95,3 +95,36 @@ export const deleteTaskService = async (
 
   return response.json();
 };
+
+export const updatedTaskService = async (
+  token: string,
+  updatingTaskId: number,
+  editingTask: Task
+) => {
+  const url = 'https://localhost:7048/api/user-tasks/';
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      updatingTaskId,
+      columnId: editingTask.columnId,
+      title: editingTask.title,
+      description: editingTask.description,
+      isCompleted: editingTask.completed,
+      isInProgress: editingTask.inProgress,
+      complitedAt: editingTask.complitedAt,
+    }),
+  });
+
+  if (response.ok) {
+    const updatedTask = await response.json();
+    console.log('Обновленная задача:', updatedTask);
+    return updatedTask;
+  } else {
+    const errorText = await response.text();
+    throw new Error(`Ошибка при добавлении колонки: ${errorText}`);
+  }
+};
